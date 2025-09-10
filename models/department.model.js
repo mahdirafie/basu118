@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
       fid: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
+        references: {
+          model: 'faculties',
+          key: 'fid'
+        }
       },
     },
     {

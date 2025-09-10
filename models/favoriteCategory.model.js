@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
       phone: {
         type: DataTypes.STRING(20),
         allowNull: false,
+        references: {
+          model: 'users',
+          key: 'phone'
+        }
       },
     },
     {

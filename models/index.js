@@ -15,6 +15,18 @@ db.FavoriteCategory = require("./favoriteCategory.model")(sequelize, DataTypes);
 db.Contactable = require("./contactable.model")(sequelize, DataTypes);
 db.Favorites = require("./favorites.model")(sequelize, DataTypes);
 db.ContactInfo = require("./contactInfo.model")(sequelize, DataTypes);
+db.Employee = require("./employee.model")(sequelize, DataTypes);
+db.EmpOperations = require("./empOperations.model")(sequelize, DataTypes);
+db.FacultyMember = require("./facultyMember.model")(sequelize, DataTypes);
+db.NonFacultyMember = require("./nonFacultyMember.model")(sequelize, DataTypes);
+db.GroupMembership = require("./groupMembership.model")(sequelize, DataTypes);
+db.Remind = require("./remind.model")(sequelize, DataTypes);
+db.EHPAV = require("./ehpav.model")(sequelize, DataTypes);
+db.ShareGroup = require("./shareGroup.model")(sequelize, DataTypes);
+db.ShareEmp = require("./shareEmp.model")(sequelize, DataTypes);
+db.Post = require("./post.model")(sequelize, DataTypes);
+db.Space = require("./space.model")(sequelize, DataTypes);
+db.ESP = require("./esp.model")(sequelize, DataTypes);
 
 // Associations
 db.Department.belongsTo(db.Faculty, {
@@ -35,7 +47,6 @@ db.PersonalAtt.hasMany(db.PersonalAttVal, {
   as: "values",
 });
 
-// New model associations
 // User to FavoriteCategory (one-to-many)
 db.User.hasMany(db.FavoriteCategory, {
   foreignKey: "phone",
@@ -75,6 +86,139 @@ db.ContactInfo.belongsTo(db.Contactable, {
   foreignKey: "cid",
   as: "contactable",
 });
+
+// Employee associations
+// Employee to Contactable (one-to-one)
+db.Employee.belongsTo(db.Contactable, {
+  foreignKey: "cid",
+  as: "contactable",
+});
+db.Contactable.hasOne(db.Employee, {
+  foreignKey: "cid",
+  as: "employee",
+});
+
+// Employee to User (one-to-one)
+db.Employee.belongsTo(db.User, {
+  foreignKey: "phone",
+  as: "user",
+});
+db.User.hasOne(db.Employee, {
+  foreignKey: "phone",
+  as: "employee",
+});
+
+// Employee to EmpOperations (one-to-many)
+db.Employee.hasMany(db.EmpOperations, {
+  foreignKey: "emp_id",
+  as: "operations",
+});
+db.EmpOperations.belongsTo(db.Employee, {
+  foreignKey: "emp_id",
+  as: "employee",
+});
+
+// Employee to FacultyMember (one-to-one)
+db.Employee.hasOne(db.FacultyMember, {
+  foreignKey: "emp_id",
+  as: "facultyMember",
+});
+db.FacultyMember.belongsTo(db.Employee, {
+  foreignKey: "emp_id",
+  as: "employee",
+});
+
+// FacultyMember to Department (many-to-one)
+db.FacultyMember.belongsTo(db.Department, {
+  foreignKey: "did",
+  as: "department",
+});
+db.Department.hasMany(db.FacultyMember, {
+  foreignKey: "did",
+  as: "facultyMembers",
+});
+
+// Employee to NonFacultyMember (one-to-one)
+db.Employee.hasOne(db.NonFacultyMember, {
+  foreignKey: "emp_id",
+  as: "nonFacultyMember",
+});
+db.NonFacultyMember.belongsTo(db.Employee, {
+  foreignKey: "emp_id",
+  as: "employee",
+});
+
+// Employee ↔ Group (many-to-many via GroupMembership)
+db.Employee.belongsToMany(db.Group, {
+  through: db.GroupMembership,
+  foreignKey: "emp_id",
+  otherKey: "gid",
+  as: "groups",
+});
+db.Group.belongsToMany(db.Employee, {
+  through: db.GroupMembership,
+  foreignKey: "gid",
+  otherKey: "emp_id",
+  as: "employees",
+});
+
+// Employee ↔ Contactable (many-to-many via Remind)
+db.Employee.belongsToMany(db.Contactable, {
+  through: db.Remind,
+  foreignKey: "emp_id",
+  otherKey: "cid",
+  as: "contactablesReminded",
+});
+db.Contactable.belongsToMany(db.Employee, {
+  through: db.Remind,
+  foreignKey: "cid",
+  otherKey: "emp_id",
+  as: "employeesReminded",
+});
+
+// Employee side (1) → hasMany
+db.Employee.hasMany(db.PersonalAttVal, {
+  foreignKey: "emp_id",
+  as: "personalAttributeValues",
+});
+
+// PersonalAttVal side (N) → belongsTo
+db.PersonalAttVal.belongsTo(db.Employee, {
+  foreignKey: "emp_id",
+  as: "employee",
+});
+
+// ShareGroup associations
+db.PersonalAttVal.hasMany(db.ShareGroup, { foreignKey: "val_id", as: "shareGroups" });
+db.ShareGroup.belongsTo(db.PersonalAttVal, { foreignKey: "val_id", as: "personalAttVal" });
+db.Employee.hasMany(db.ShareGroup, { foreignKey: "emp_id", as: "shareGroups" });
+db.ShareGroup.belongsTo(db.Employee, { foreignKey: "emp_id", as: "employee" });
+db.Group.hasMany(db.ShareGroup, { foreignKey: "gid", as: "shareGroups" });
+db.ShareGroup.belongsTo(db.Group, { foreignKey: "gid", as: "group" });
+
+// ShareEmp associations
+db.PersonalAttVal.hasMany(db.ShareEmp, { foreignKey: "val_id", as: "shareEmps" });
+db.ShareEmp.belongsTo(db.PersonalAttVal, { foreignKey: "val_id", as: "personalAttVal" });
+db.Employee.hasMany(db.ShareEmp, { foreignKey: "emp_id_sender", as: "sharesSent" });
+db.ShareEmp.belongsTo(db.Employee, { foreignKey: "emp_id_sender", as: "sender" });
+db.Employee.hasMany(db.ShareEmp, { foreignKey: "emp_id_receiver", as: "sharesReceived" });
+db.ShareEmp.belongsTo(db.Employee, { foreignKey: "emp_id_receiver", as: "receiver" });
+
+// Post associations
+db.Contactable.hasOne(db.Post, { foreignKey: "cid", as: "post" });
+db.Post.belongsTo(db.Contactable, { foreignKey: "cid", as: "contactable" });
+
+// Space associations
+db.Contactable.hasOne(db.Space, { foreignKey: "cid", as: "space" });
+db.Space.belongsTo(db.Contactable, { foreignKey: "cid", as: "contactable" });
+
+// ESP associations
+db.Employee.hasMany(db.ESP, { foreignKey: "emp_id", as: "esps" });
+db.ESP.belongsTo(db.Employee, { foreignKey: "emp_id", as: "employee" });
+db.Space.hasMany(db.ESP, { foreignKey: "sid", as: "esps" });
+db.ESP.belongsTo(db.Space, { foreignKey: "sid", as: "space" });
+db.Post.hasMany(db.ESP, { foreignKey: "pid", as: "esps" });
+db.ESP.belongsTo(db.Post, { foreignKey: "pid", as: "post" });
 
 db.sequelize = sequelize;
 db.Sequelize = sequelize.constructor;

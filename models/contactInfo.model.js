@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       cid: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
+        references: {
+          model: 'contactables',
+          key: 'cid'
+        }
       },
     },
     {

@@ -1,35 +1,34 @@
 module.exports = (sequelize, DataTypes) => {
-  const PersonalAttVal = sequelize.define(
-    "PersonalAttVal",
+  const EHPAV = sequelize.define(
+    "EHPAV",
     {
       val_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
-        autoIncrement: true,
-      },
-      value: {
-        type: DataTypes.TEXT,
         allowNull: false,
+        references: {
+          model: 'personal_attribute_values',
+          key: 'val_id'
+        }
       },
-      att_id: {
+      emp_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
         references: {
-          model: 'personal_attributes',
-          key: 'att_id'
+          model: 'employees',
+          key: 'emp_id'
         }
       },
     },
     {
-      tableName: "personal_attribute_values",
+      tableName: "ehpavs",
       timestamps: false,
       indexes: [
-        { fields: ["att_id"] },
+        { fields: ["val_id"] },
+        { fields: ["emp_id"] },
       ],
     }
   );
 
-  return PersonalAttVal;
+  return EHPAV;
 };
-
-

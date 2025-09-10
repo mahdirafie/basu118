@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const Favorites = sequelize.define(
-    "Favorites",
+  const Remind = sequelize.define(
+    "Remind",
     {
       cid: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -11,25 +11,29 @@ module.exports = (sequelize, DataTypes) => {
           key: 'cid'
         }
       },
-      favcat_id: {
+      emp_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'favorite_categories',
-          key: 'favcat_id'
+          model: 'employees',
+          key: 'emp_id'
         }
+      },
+      time: {
+        type: DataTypes.DATE,
+        allowNull: true,
       },
     },
     {
-      tableName: "favorites",
+      tableName: "reminds",
       timestamps: false,
       indexes: [
         { fields: ["cid"] },
-        { fields: ["favcat_id"] },
+        { fields: ["emp_id"] },
       ],
     }
   );
 
-  return Favorites;
+  return Remind;
 };

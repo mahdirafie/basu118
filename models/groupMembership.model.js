@@ -1,35 +1,35 @@
 module.exports = (sequelize, DataTypes) => {
-  const Favorites = sequelize.define(
-    "Favorites",
+  const GroupMembership = sequelize.define(
+    "GroupMembership",
     {
-      cid: {
+      emp_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'contactables',
-          key: 'cid'
+          model: 'employees',
+          key: 'emp_id'
         }
       },
-      favcat_id: {
+      gid: {
         type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         allowNull: false,
         references: {
-          model: 'favorite_categories',
-          key: 'favcat_id'
+          model: 'groups',
+          key: 'gid'
         }
       },
     },
     {
-      tableName: "favorites",
+      tableName: "group_memberships",
       timestamps: false,
       indexes: [
-        { fields: ["cid"] },
-        { fields: ["favcat_id"] },
+        { fields: ["emp_id"] },
+        { fields: ["gid"] },
       ],
     }
   );
 
-  return Favorites;
+  return GroupMembership;
 };
