@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
           key: 'emp_id'
         }
       },
-      value: {
+      operation: {
         type: DataTypes.STRING(255),
         primaryKey: true,
         allowNull: false,

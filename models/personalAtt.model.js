@@ -10,10 +10,10 @@ module.exports = (sequelize, DataTypes) => {
       is_sharable: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
-        defaultValue: false,
+        defaultValue: true,
       },
       type: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.ENUM("string", "number", "bool"),
         allowNull: false,
       },
       name: {

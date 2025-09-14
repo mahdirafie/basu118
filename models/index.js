@@ -100,11 +100,11 @@ db.Contactable.hasOne(db.Employee, {
 
 // Employee to User (one-to-one)
 db.Employee.belongsTo(db.User, {
-  foreignKey: "phone",
+  foreignKey: "uid",
   as: "user",
 });
 db.User.hasOne(db.Employee, {
-  foreignKey: "phone",
+  foreignKey: "uid",
   as: "employee",
 });
 
@@ -191,17 +191,17 @@ db.PersonalAttVal.belongsTo(db.Employee, {
 // ShareGroup associations
 db.PersonalAttVal.hasMany(db.ShareGroup, { foreignKey: "val_id", as: "shareGroups" });
 db.ShareGroup.belongsTo(db.PersonalAttVal, { foreignKey: "val_id", as: "personalAttVal" });
-db.Employee.hasMany(db.ShareGroup, { foreignKey: "emp_id", as: "shareGroups" });
+db.Employee.hasOne(db.ShareGroup, { foreignKey: "emp_id", as: "shareGroup" });
 db.ShareGroup.belongsTo(db.Employee, { foreignKey: "emp_id", as: "employee" });
-db.Group.hasMany(db.ShareGroup, { foreignKey: "gid", as: "shareGroups" });
+db.Group.hasOne(db.ShareGroup, { foreignKey: "gid", as: "shareGroup" });
 db.ShareGroup.belongsTo(db.Group, { foreignKey: "gid", as: "group" });
 
 // ShareEmp associations
 db.PersonalAttVal.hasMany(db.ShareEmp, { foreignKey: "val_id", as: "shareEmps" });
 db.ShareEmp.belongsTo(db.PersonalAttVal, { foreignKey: "val_id", as: "personalAttVal" });
-db.Employee.hasMany(db.ShareEmp, { foreignKey: "emp_id_sender", as: "sharesSent" });
+db.Employee.hasOne(db.ShareEmp, { foreignKey: "emp_id_sender", as: "shareSent" });
 db.ShareEmp.belongsTo(db.Employee, { foreignKey: "emp_id_sender", as: "sender" });
-db.Employee.hasMany(db.ShareEmp, { foreignKey: "emp_id_receiver", as: "sharesReceived" });
+db.Employee.hasOne(db.ShareEmp, { foreignKey: "emp_id_receiver", as: "shareReceived" });
 db.ShareEmp.belongsTo(db.Employee, { foreignKey: "emp_id_receiver", as: "receiver" });
 
 // Post associations
@@ -213,16 +213,15 @@ db.Contactable.hasOne(db.Space, { foreignKey: "cid", as: "space" });
 db.Space.belongsTo(db.Contactable, { foreignKey: "cid", as: "contactable" });
 
 // ESP associations
-db.Employee.hasMany(db.ESP, { foreignKey: "emp_id", as: "esps" });
+db.Employee.hasOne(db.ESP, { foreignKey: "emp_id", as: "esp" });
 db.ESP.belongsTo(db.Employee, { foreignKey: "emp_id", as: "employee" });
-db.Space.hasMany(db.ESP, { foreignKey: "sid", as: "esps" });
+db.Space.hasOne(db.ESP, { foreignKey: "sid", as: "esp" });
 db.ESP.belongsTo(db.Space, { foreignKey: "sid", as: "space" });
-db.Post.hasMany(db.ESP, { foreignKey: "pid", as: "esps" });
+db.Post.hasOne(db.ESP, { foreignKey: "pid", as: "esp" });
 db.ESP.belongsTo(db.Post, { foreignKey: "pid", as: "post" });
+
 
 db.sequelize = sequelize;
 db.Sequelize = sequelize.constructor;
 
 module.exports = db;
-
-

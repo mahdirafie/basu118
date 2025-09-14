@@ -17,14 +17,15 @@ module.exports = (sequelize, DataTypes) => {
         references: {
           model: 'personal_attributes',
           key: 'att_id'
-        }
+        },
+        unique: true
       },
     },
     {
       tableName: "personal_attribute_values",
       timestamps: false,
       indexes: [
-        { fields: ["att_id"] },
+        { fields: ["att_id"], unique: true },
       ],
     }
   );
