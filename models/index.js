@@ -27,6 +27,7 @@ db.ShareEmp = require("./shareEmp.model")(sequelize, DataTypes);
 db.Post = require("./post.model")(sequelize, DataTypes);
 db.Space = require("./space.model")(sequelize, DataTypes);
 db.ESP = require("./esp.model")(sequelize, DataTypes);
+db.OTP = require("./otp.model")(sequelize, DataTypes);
 
 // Associations
 db.Department.belongsTo(db.Faculty, {
@@ -176,18 +177,6 @@ db.Contactable.belongsToMany(db.Employee, {
   as: "employeesReminded",
 });
 
-// Employee side (1) → hasMany
-db.Employee.hasMany(db.PersonalAttVal, {
-  foreignKey: "emp_id",
-  as: "personalAttributeValues",
-});
-
-// PersonalAttVal side (N) → belongsTo
-db.PersonalAttVal.belongsTo(db.Employee, {
-  foreignKey: "emp_id",
-  as: "employee",
-});
-
 // ShareGroup associations
 db.PersonalAttVal.hasMany(db.ShareGroup, { foreignKey: "val_id", as: "shareGroups" });
 db.ShareGroup.belongsTo(db.PersonalAttVal, { foreignKey: "val_id", as: "personalAttVal" });
@@ -212,13 +201,15 @@ db.Post.belongsTo(db.Contactable, { foreignKey: "cid", as: "contactable" });
 db.Contactable.hasOne(db.Space, { foreignKey: "cid", as: "space" });
 db.Space.belongsTo(db.Contactable, { foreignKey: "cid", as: "contactable" });
 
-// ESP associations
-db.Employee.hasOne(db.ESP, { foreignKey: "emp_id", as: "esp" });
+// ESP associations (many-to-many relationships)
+db.Employee.hasMany(db.ESP, { foreignKey: "emp_id", as: "esps" });
 db.ESP.belongsTo(db.Employee, { foreignKey: "emp_id", as: "employee" });
-db.Space.hasOne(db.ESP, { foreignKey: "sid", as: "esp" });
+db.Space.hasMany(db.ESP, { foreignKey: "sid", as: "esps" });
 db.ESP.belongsTo(db.Space, { foreignKey: "sid", as: "space" });
-db.Post.hasOne(db.ESP, { foreignKey: "pid", as: "esp" });
+db.Post.hasMany(db.ESP, { foreignKey: "pid", as: "esps" });
 db.ESP.belongsTo(db.Post, { foreignKey: "pid", as: "post" });
+
+// OTP: standalone by phone (no FK to User for registration flow)
 
 
 db.sequelize = sequelize;

@@ -23,10 +23,16 @@ const facultyMemberRoutes = require("./routes/facultyMember.routes");
 const nonFacultyMemberRoutes = require("./routes/nonFacultyMember.routes");
 const favoriteCategoryRoutes = require("./routes/favoriteCategory.routes");
 const favoritesRoutes = require("./routes/favorites.routes");
+const authRoutes = require("./routes/auth.routes");
 const contactInfoRoutes = require("./routes/contactInfo.routes");
+const multiModelRoutes = require("./routes/multiModel.routes");
+
+const cors = require('cors');
 
 const app = express();
 const PORT = 4000;
+
+app.use(cors());
 
 app.use(express.json());
 
@@ -70,7 +76,9 @@ app.use("/api/faculty-members", facultyMemberRoutes);
 app.use("/api/non-faculty-members", nonFacultyMemberRoutes);
 app.use("/api/favorite-categories", favoriteCategoryRoutes);
 app.use("/api/favorites", favoritesRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/contact-infos", contactInfoRoutes);
+app.use("/api/multi-model", multiModelRoutes);
 
 app.get("/swagger.json", (req, res) => {
   res.setHeader("Content-Type", "application/json");

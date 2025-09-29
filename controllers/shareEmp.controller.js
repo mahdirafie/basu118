@@ -9,7 +9,7 @@ async function getShareEmps(req, res) {
     const parsedIndex = Number(index);
 
     const queryOptions = {
-      attributes: ["val_id", "emp_id_sender", "emp_id_receiver"],
+      attributes: ["val_id", "emp_id_sender", "emp_id_receiver", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -110,13 +110,15 @@ async function createShareEmp(req, res) {
     const shareEmp = await ShareEmp.create({
       val_id,
       emp_id_sender,
-      emp_id_receiver
+      emp_id_receiver,
+      created_at: new Date()
     });
 
     return res.status(201).json({
       val_id: shareEmp.val_id,
       emp_id_sender: shareEmp.emp_id_sender,
-      emp_id_receiver: shareEmp.emp_id_receiver
+      emp_id_receiver: shareEmp.emp_id_receiver,
+      created_at: shareEmp.created_at
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -128,7 +130,7 @@ async function getShareEmpById(req, res) {
     const { val_id } = req.params;
     
     const shareEmp = await ShareEmp.findByPk(val_id, {
-      attributes: ["val_id", "emp_id_sender", "emp_id_receiver"],
+      attributes: ["val_id", "emp_id_sender", "emp_id_receiver", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -180,7 +182,7 @@ async function getShareEmpsBySenderId(req, res) {
 
     const queryOptions = {
       where: { emp_id_sender: parseInt(emp_id_sender) },
-      attributes: ["val_id", "emp_id_sender", "emp_id_receiver"],
+      attributes: ["val_id", "emp_id_sender", "emp_id_receiver", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -234,7 +236,7 @@ async function getShareEmpsByReceiverId(req, res) {
 
     const queryOptions = {
       where: { emp_id_receiver: parseInt(emp_id_receiver) },
-      attributes: ["val_id", "emp_id_sender", "emp_id_receiver"],
+      attributes: ["val_id", "emp_id_sender", "emp_id_receiver", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -314,7 +316,8 @@ async function updateShareEmp(req, res) {
     return res.json({
       val_id: shareEmp.val_id,
       emp_id_sender: shareEmp.emp_id_sender,
-      emp_id_receiver: shareEmp.emp_id_receiver
+      emp_id_receiver: shareEmp.emp_id_receiver,
+      created_at: shareEmp.created_at
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -27,6 +27,8 @@ const controller = require("../controllers/personalAttVal.controller");
  *                 type: integer
  *               value:
  *                 type: string
+ *               is_sharable:
+ *                 type: boolean
  *     responses:
  *       201:
  *         description: Created
@@ -71,10 +73,11 @@ router.post("/", controller.createPersonalAttVal);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [value]
  *             properties:
  *               value:
  *                 type: string
+ *               is_sharable:
+ *                 type: boolean
  *     responses:
  *       200:
  *         description: Updated

@@ -38,32 +38,20 @@ async function getSpaces(req, res) {
 
 async function createSpace(req, res) {
   try {
-    const { cid, sname, room } = req.body;
+    const { sname, room } = req.body;
     
-    if (!cid || !sname) {
+    if (!sname) {
       return res.status(400).json({ 
-        message: "cid and sname are required" 
+        message: "sname is required" 
       });
     }
 
-    // Check if Contactable exists
-    const contactable = await Contactable.findByPk(cid);
-    if (!contactable) {
-      return res.status(404).json({ 
-        message: "Contactable not found" 
-      });
-    }
-
-    // Check if Space already exists for this contactable
-    const existingSpace = await Space.findByPk(cid);
-    if (existingSpace) {
-      return res.status(409).json({ 
-        message: "Space already exists for this contactable" 
-      });
-    }
-
+    // Create a new Contactable first
+    const contactable = await Contactable.create({});
+    
+    // Create Space with the generated cid
     const space = await Space.create({
-      cid,
+      cid: contactable.cid,
       sname,
       room: room || null
     });

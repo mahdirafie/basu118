@@ -5,7 +5,7 @@ const { PersonalAttVal, PersonalAtt } = db;
 // Create the value for a specified attribute (att_id must be unique)
 async function createPersonalAttVal(req, res) {
   try {
-    const { att_id, value } = req.body;
+    const { att_id, value, is_sharable } = req.body;
     if (att_id === undefined) {
       return res.status(400).json({ message: "att_id is required" });
     }
@@ -25,7 +25,7 @@ async function createPersonalAttVal(req, res) {
       return res.status(409).json({ message: "Value for this attribute already exists" });
     }
 
-    const created = await PersonalAttVal.create({ att_id, value });
+    const created = await PersonalAttVal.create({ att_id, value, is_sharable });
     return res.status(201).json(created);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -36,15 +36,13 @@ async function createPersonalAttVal(req, res) {
 async function updatePersonalAttVal(req, res) {
   try {
     const { val_id } = req.params;
-    const { value } = req.body;
+    const { value, is_sharable } = req.body;
     const item = await PersonalAttVal.findByPk(val_id);
     if (!item) {
       return res.status(404).json({ message: "Value not found" });
     }
-    if (value === undefined) {
-      return res.status(400).json({ message: "value is required" });
-    }
-    item.value = value;
+    if (value !== undefined) item.value = value;
+    if (is_sharable !== undefined) item.is_sharable = is_sharable;
     await item.save();
     return res.json(item);
   } catch (error) {

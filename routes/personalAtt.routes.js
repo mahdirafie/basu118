@@ -34,8 +34,6 @@ const controller = require("../controllers/personalAtt.controller");
  *               type:
  *                 type: string
  *                 enum: [string, number, bool]
- *               is_sharable:
- *                 type: boolean
  *     responses:
  *       201:
  *         description: Created
@@ -82,8 +80,6 @@ router.route("/").get(controller.getPersonalAtts).post(controller.createPersonal
  *               type:
  *                 type: string
  *                 enum: [string, number, bool]
- *               is_sharable:
- *                 type: boolean
  *     responses:
  *       200:
  *         description: Updated

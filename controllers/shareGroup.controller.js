@@ -9,7 +9,7 @@ async function getShareGroups(req, res) {
     const parsedIndex = Number(index);
 
     const queryOptions = {
-      attributes: ["val_id", "emp_id", "gid", "sent_at"],
+      attributes: ["val_id", "emp_id", "gid", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -60,7 +60,7 @@ async function getShareGroups(req, res) {
 
 async function createShareGroup(req, res) {
   try {
-    const { val_id, emp_id, gid, sent_at } = req.body;
+    const { val_id, emp_id, gid, created_at } = req.body;
     
     if (!val_id || !emp_id || !gid) {
       return res.status(400).json({ 
@@ -104,14 +104,14 @@ async function createShareGroup(req, res) {
       val_id,
       emp_id,
       gid,
-      sent_at: sent_at || new Date()
+      created_at: created_at || new Date()
     });
 
     return res.status(201).json({
       val_id: shareGroup.val_id,
       emp_id: shareGroup.emp_id,
       gid: shareGroup.gid,
-      sent_at: shareGroup.sent_at
+      created_at: shareGroup.created_at
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -123,7 +123,7 @@ async function getShareGroupById(req, res) {
     const { val_id } = req.params;
     
     const shareGroup = await ShareGroup.findByPk(val_id, {
-      attributes: ["val_id", "emp_id", "gid", "sent_at"],
+      attributes: ["val_id", "emp_id", "gid", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -175,7 +175,7 @@ async function getShareGroupsByEmployeeId(req, res) {
 
     const queryOptions = {
       where: { emp_id: parseInt(emp_id) },
-      attributes: ["val_id", "emp_id", "gid", "sent_at"],
+      attributes: ["val_id", "emp_id", "gid", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -229,7 +229,7 @@ async function getShareGroupsByGroupId(req, res) {
 
     const queryOptions = {
       where: { gid: parseInt(gid) },
-      attributes: ["val_id", "emp_id", "gid", "sent_at"],
+      attributes: ["val_id", "emp_id", "gid", "created_at"],
       include: [
         {
           model: PersonalAttVal,
@@ -271,7 +271,7 @@ async function getShareGroupsByGroupId(req, res) {
 async function updateShareGroup(req, res) {
   try {
     const { val_id } = req.params;
-    const { emp_id, gid, sent_at } = req.body;
+    const { emp_id, gid, created_at } = req.body;
 
     const shareGroup = await ShareGroup.findByPk(val_id);
     if (!shareGroup) {
@@ -296,7 +296,7 @@ async function updateShareGroup(req, res) {
     // Update fields
     if (emp_id !== undefined) shareGroup.emp_id = emp_id;
     if (gid !== undefined) shareGroup.gid = gid;
-    if (sent_at !== undefined) shareGroup.sent_at = sent_at;
+    if (created_at !== undefined) shareGroup.created_at = created_at;
     
     await shareGroup.save();
 
@@ -304,7 +304,7 @@ async function updateShareGroup(req, res) {
       val_id: shareGroup.val_id,
       emp_id: shareGroup.emp_id,
       gid: shareGroup.gid,
-      sent_at: shareGroup.sent_at
+      created_at: shareGroup.created_at
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

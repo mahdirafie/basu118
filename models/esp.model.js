@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       sid: {
         // FK to Space (its PK is cid)
         type: DataTypes.INTEGER.UNSIGNED,
+        primaryKey: true,
         allowNull: false,
         references: {
           model: 'spaces',
@@ -23,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       pid: {
         // FK to Post (its PK is cid)
         type: DataTypes.INTEGER.UNSIGNED,
+        primaryKey: true,
         allowNull: false,
         references: {
           model: 'posts',
@@ -37,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
         { fields: ["emp_id"] },
         { fields: ["sid"] },
         { fields: ["pid"] },
+        { fields: ["emp_id", "sid", "pid"], unique: true },
       ],
     }
   );

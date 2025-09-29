@@ -69,7 +69,7 @@ const controller = require("../controllers/shareGroup.controller");
  *               gid:
  *                 type: integer
  *                 description: Group ID (with whom shared)
- *               sent_at:
+ *               created_at:
  *                 type: string
  *                 format: date-time
  *                 description: When it was shared (optional, defaults to current time)
@@ -228,7 +228,7 @@ router
  *               gid:
  *                 type: integer
  *                 description: New group ID
- *               sent_at:
+ *               created_at:
  *                 type: string
  *                 format: date-time
  *                 description: New sent time
@@ -282,7 +282,7 @@ router
  *               gid:
  *                 type: integer
  *                 description: Group ID (with whom to share)
- *               sent_at:
+ *               created_at:
  *                 type: string
  *                 format: date-time
  *                 description: When it was shared (optional, defaults to current time)

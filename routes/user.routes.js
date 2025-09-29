@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const controller = require("../controllers/user.controller");
+const isAuth = require("../middlewares/is_auth");
 
 /**
  * @swagger
@@ -90,6 +91,52 @@ router.route("/").get(controller.getUsers).post(controller.createUser);
  *       404:
  *         description: Not found
  */
+/**
+ * @swagger
+ * /api/users/user-favorite-categories:
+ *   get:
+ *     summary: Get my favorite categories (from token)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of favorite categories
+ *       401:
+ *         description: Unauthorized
+ */
+router.route("/user-favorite-categories").get(isAuth(), controller.getMyFavoriteCategories);
+
+/**
+ * @swagger
+ * /api/users/user-favorite-categories:
+ *   post:
+ *     summary: Create a favorite category for me (from token)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title]
+ *             properties:
+ *               title:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Created
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate
+ */
+router.route("/user-favorite-categories").post(isAuth(), controller.createMyFavoriteCategory);
+
 router
   .route("/:phone")
   .get(controller.getUserByPhone)
@@ -114,6 +161,36 @@ router
  *         description: Not found
  */
 router.route("/uid/:uid").get(controller.getUserByUid);
+
+/**
+ * @swagger
+ * /api/users/login:
+ *   post:
+ *     summary: Login user (general or employee)
+ *     tags: [User]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [username, password]
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Token and user info
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ */
+router.route("/login").post(controller.login);
 
 /**
  * @swagger
@@ -183,16 +260,60 @@ router.route("/:phone/password").put(controller.changePassword);
 
 /**
  * @swagger
- * /api/users/{phone}/favorite-categories:
- *   post:
- *     summary: Add a favorite category for a user
+ * /api/users/passwordbyadmin:
+ *   put:
+ *     summary: Change user's password by admin
  *     tags: [User]
- *     parameters:
- *       - in: path
- *         name: phone
- *         schema:
- *           type: string
- *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [phone, user_type, new_password]
+ *             properties:
+ *               phone:
+ *                 type: string
+ *               new_password:
+ *                 type: string
+ *               user_type:
+ *                 type: string
+ *     responses:
+ *       204:
+ *         description: No Content
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Not found
+ */
+router.route('/passwordbyadmin').put(controller.changePasswordByAdmin);
+
+/**
+ * @swagger
+ * /api/users/user-favorite-categories:
+ *   get:
+ *     summary: Get my favorite categories (from token)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of favorite categories
+ *       401:
+ *         description: Unauthorized
+ */
+router.route("/user-favorite-categories").get(isAuth(), controller.getMyFavoriteCategories);
+
+/**
+ * @swagger
+ * /api/users/user-favorite-categories:
+ *   post:
+ *     summary: Create a favorite category for me (from token)
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -208,10 +329,12 @@ router.route("/:phone/password").put(controller.changePassword);
  *         description: Created
  *       400:
  *         description: Bad request
- *       404:
- *         description: User not found
+ *       401:
+ *         description: Unauthorized
+ *       409:
+ *         description: Duplicate
  */
-router.route("/:phone/favorite-categories").post(controller.addFavoriteCategory);
+router.route("/user-favorite-categories").post(isAuth(), controller.createMyFavoriteCategory);
 
 module.exports = router;
 

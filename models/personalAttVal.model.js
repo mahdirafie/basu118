@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      is_sharable: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+      },
       att_id: {
         type: DataTypes.INTEGER.UNSIGNED,
         allowNull: false,
@@ -18,14 +23,14 @@ module.exports = (sequelize, DataTypes) => {
           model: 'personal_attributes',
           key: 'att_id'
         },
-        unique: true
+        unique: false
       },
     },
     {
       tableName: "personal_attribute_values",
       timestamps: false,
       indexes: [
-        { fields: ["att_id"], unique: true },
+        { fields: ["att_id"], unique: false },
       ],
     }
   );

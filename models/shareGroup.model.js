@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
           key: 'gid'
         }
       },
-      sent_at: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: true,
       },

@@ -46,11 +46,8 @@ const controller = require("../controllers/space.controller");
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cid, sname]
+ *             required: [sname]
  *             properties:
- *               cid:
- *                 type: integer
- *                 description: Contactable ID
  *               sname:
  *                 type: string
  *                 description: Space name
@@ -62,10 +59,6 @@ const controller = require("../controllers/space.controller");
  *         description: Space created successfully
  *       400:
  *         description: Bad request
- *       404:
- *         description: Contactable not found
- *       409:
- *         description: Space already exists for this contactable
  */
 router.route("/").get(controller.getSpaces).post(controller.createSpace);
 

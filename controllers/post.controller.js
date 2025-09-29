@@ -38,32 +38,20 @@ async function getPosts(req, res) {
 
 async function createPost(req, res) {
   try {
-    const { cid, pname, description } = req.body;
+    const { pname, description } = req.body;
     
-    if (!cid || !pname) {
+    if (!pname) {
       return res.status(400).json({ 
-        message: "cid and pname are required" 
+        message: "pname is required" 
       });
     }
 
-    // Check if Contactable exists
-    const contactable = await Contactable.findByPk(cid);
-    if (!contactable) {
-      return res.status(404).json({ 
-        message: "Contactable not found" 
-      });
-    }
-
-    // Check if Post already exists for this contactable
-    const existingPost = await Post.findByPk(cid);
-    if (existingPost) {
-      return res.status(409).json({ 
-        message: "Post already exists for this contactable" 
-      });
-    }
-
+    // Create a new Contactable first
+    const contactable = await Contactable.create({});
+    
+    // Create Post with the generated cid
     const post = await Post.create({
-      cid,
+      cid: contactable.cid,
       pname,
       description: description || null
     });
@@ -145,86 +133,10 @@ async function deletePost(req, res) {
   }
 }
 
-async function getPostByContactableId(req, res) {
-  try {
-    const { cid } = req.params;
-    
-    // Check if contactable exists
-    const contactable = await Contactable.findByPk(cid);
-    if (!contactable) {
-      return res.status(404).json({ message: "Contactable not found" });
-    }
-
-    const post = await Post.findByPk(cid, {
-      attributes: ["cid", "pname", "description"],
-      include: [
-        {
-          model: Contactable,
-          as: "contactable",
-          attributes: ["cid"]
-        }
-      ]
-    });
-
-    if (!post) {
-      return res.status(404).json({ message: "No post found for this contactable" });
-    }
-
-    return res.json(post);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-}
-
-async function createPostForContactable(req, res) {
-  try {
-    const { cid, pname, description } = req.body;
-    
-    if (!cid || !pname) {
-      return res.status(400).json({ 
-        message: "cid and pname are required" 
-      });
-    }
-
-    // Check if Contactable exists
-    const contactable = await Contactable.findByPk(cid);
-    if (!contactable) {
-      return res.status(404).json({ 
-        message: "Contactable not found" 
-      });
-    }
-
-    // Check if Post already exists for this contactable
-    const existingPost = await Post.findByPk(cid);
-    if (existingPost) {
-      return res.status(409).json({ 
-        message: "Post already exists for this contactable" 
-      });
-    }
-
-    const post = await Post.create({
-      cid,
-      pname,
-      description: description || null
-    });
-
-    return res.status(201).json({
-      message: "Post created for contactable successfully",
-      cid: post.cid,
-      pname: post.pname,
-      description: post.description
-    });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-}
-
 module.exports = {
   getPosts,
   createPost,
   getPostById,
   updatePost,
-  deletePost,
-  getPostByContactableId,
-  createPostForContactable,
+  deletePost
 };

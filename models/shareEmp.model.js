@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
           key: 'emp_id'
         }
       },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       tableName: "share_emps",

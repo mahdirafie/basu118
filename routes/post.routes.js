@@ -46,11 +46,8 @@ const controller = require("../controllers/post.controller");
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cid, pname]
+ *             required: [pname]
  *             properties:
- *               cid:
- *                 type: integer
- *                 description: Contactable ID
  *               pname:
  *                 type: string
  *                 description: Post name
@@ -62,69 +59,8 @@ const controller = require("../controllers/post.controller");
  *         description: Post created successfully
  *       400:
  *         description: Bad request
- *       404:
- *         description: Contactable not found
- *       409:
- *         description: Post already exists for this contactable
  */
 router.route("/").get(controller.getPosts).post(controller.createPost);
-
-/**
- * @swagger
- * /api/posts/contactable/{cid}:
- *   get:
- *     summary: Get post for a specific contactable
- *     tags: [Post]
- *     parameters:
- *       - in: path
- *         name: cid
- *         schema:
- *           type: integer
- *         required: true
- *         description: Contactable ID
- *     responses:
- *       200:
- *         description: Post details for the contactable
- *       404:
- *         description: Contactable or Post not found
- *   post:
- *     summary: Create a post for a specific contactable
- *     tags: [Post]
- *     parameters:
- *       - in: path
- *         name: cid
- *         schema:
- *           type: integer
- *         required: true
- *         description: Contactable ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [pname]
- *             properties:
- *               pname:
- *                 type: string
- *                 description: Post name
- *               description:
- *                 type: string
- *                 description: Post description (optional)
- *     responses:
- *       201:
- *         description: Post created for contactable successfully
- *       400:
- *         description: Bad request
- *       404:
- *         description: Contactable not found
- *       409:
- *         description: Post already exists for this contactable
- */
-router
-  .route("/contactable/:cid")
-  .get(controller.getPostByContactableId)
-  .post(controller.createPostForContactable);
 
 /**
  * @swagger

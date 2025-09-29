@@ -7,11 +7,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      is_sharable: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
-      },
       type: {
         type: DataTypes.ENUM("string", "number", "bool"),
         allowNull: false,

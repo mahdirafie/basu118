@@ -85,11 +85,13 @@ async function createESP(req, res) {
       });
     }
 
-    // Check if ESP already exists
-    const existingESP = await ESP.findByPk(emp_id);
+    // Check if ESP already exists (composite key check)
+    const existingESP = await ESP.findOne({
+      where: { emp_id, sid, pid }
+    });
     if (existingESP) {
       return res.status(409).json({ 
-        message: "ESP record already exists for this employee" 
+        message: "ESP record already exists for this combination of employee, space, and post" 
       });
     }
 
@@ -111,9 +113,10 @@ async function createESP(req, res) {
 
 async function getESPById(req, res) {
   try {
-    const { emp_id } = req.params;
+    const { emp_id, sid, pid } = req.params;
     
-    const esp = await ESP.findByPk(emp_id, {
+    const esp = await ESP.findOne({
+      where: { emp_id: parseInt(emp_id), sid: parseInt(sid), pid: parseInt(pid) },
       attributes: ["emp_id", "sid", "pid"],
       include: [
         {
@@ -287,34 +290,61 @@ async function getESPsByPostId(req, res) {
 
 async function updateESP(req, res) {
   try {
-    const { emp_id } = req.params;
-    const { sid, pid } = req.body;
+    const { emp_id, sid, pid } = req.params;
+    const { new_sid, new_pid } = req.body;
 
-    const esp = await ESP.findByPk(emp_id);
+    const esp = await ESP.findOne({
+      where: { emp_id: parseInt(emp_id), sid: parseInt(sid), pid: parseInt(pid) }
+    });
+
     if (!esp) {
       return res.status(404).json({ message: "ESP record not found" });
     }
 
     // Validate foreign keys if provided
-    if (sid !== undefined) {
-      const space = await Space.findByPk(sid);
+    if (new_sid !== undefined) {
+      const space = await Space.findByPk(new_sid);
       if (!space) {
         return res.status(404).json({ message: "Space not found" });
       }
     }
 
-    if (pid !== undefined) {
-      const post = await Post.findByPk(pid);
+    if (new_pid !== undefined) {
+      const post = await Post.findByPk(new_pid);
       if (!post) {
         return res.status(404).json({ message: "Post not found" });
       }
     }
 
-    // Update fields
-    if (sid !== undefined) esp.sid = sid;
-    if (pid !== undefined) esp.pid = pid;
-    
-    await esp.save();
+    // For composite key updates, we need to delete and recreate
+    if (new_sid !== undefined || new_pid !== undefined) {
+      const newSid = new_sid !== undefined ? new_sid : esp.sid;
+      const newPid = new_pid !== undefined ? new_pid : esp.pid;
+      
+      // Check if new combination already exists
+      const existingESP = await ESP.findOne({
+        where: { emp_id: esp.emp_id, sid: newSid, pid: newPid }
+      });
+      if (existingESP) {
+        return res.status(409).json({ 
+          message: "ESP record already exists for this combination" 
+        });
+      }
+      
+      // Delete old record and create new one
+      await esp.destroy();
+      const newEsp = await ESP.create({
+        emp_id: esp.emp_id,
+        sid: newSid,
+        pid: newPid
+      });
+      
+      return res.json({
+        emp_id: newEsp.emp_id,
+        sid: newEsp.sid,
+        pid: newEsp.pid
+      });
+    }
 
     return res.json({
       emp_id: esp.emp_id,
@@ -328,9 +358,12 @@ async function updateESP(req, res) {
 
 async function deleteESP(req, res) {
   try {
-    const { emp_id } = req.params;
+    const { emp_id, sid, pid } = req.params;
     
-    const esp = await ESP.findByPk(emp_id);
+    const esp = await ESP.findOne({
+      where: { emp_id: parseInt(emp_id), sid: parseInt(sid), pid: parseInt(pid) }
+    });
+
     if (!esp) {
       return res.status(404).json({ message: "ESP record not found" });
     }
@@ -436,11 +469,13 @@ async function assignEmployeeToSpaceAndPost(req, res) {
       });
     }
 
-    // Check if ESP already exists
-    const existingESP = await ESP.findByPk(emp_id);
+    // Check if ESP already exists (composite key check)
+    const existingESP = await ESP.findOne({
+      where: { emp_id, sid, pid }
+    });
     if (existingESP) {
       return res.status(409).json({ 
-        message: "ESP record already exists for this employee" 
+        message: "ESP record already exists for this combination of employee, space, and post" 
       });
     }
 
